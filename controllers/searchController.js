@@ -7,7 +7,6 @@ const aiSearchController = require("./aiSearchController");
 const searchController = async (search) => {
   const uri = process.env.MONGODB_URI;
   const client = new MongoClient(uri);
-  console.log("SEARCH", search);
 
   try {
     await client.connect();
@@ -27,12 +26,15 @@ const searchCollection = async (client, search) => {
   const cursor1 = await client.db("auction").collection("auctionitems").find();
   const items = await cursor1.toArray();
 
-  const idObject = await aiSearchController(search, items);
-  const ids = idObject.ids;
+  const result = await aiSearchController(search, items);
+  const titleJson = result.slice(7, -3);
+  const titleObject = JSON.parse(titleJson);
+  const titles = titleObject.titles;
 
-  console.log("IDS", idObject);
-
-  const cursor = await client.db("auction").collection("auctionitems").find();
+  const cursor = await client
+    .db("auction")
+    .collection("auctionitems")
+    .find({ title: { $in: titles } });
   const list = await cursor.toArray();
   return list;
 };

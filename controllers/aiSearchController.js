@@ -18,14 +18,15 @@ const aiSearchController = async (search, items) => {
     // The Gemini model
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
-      systemInstruction: `Your job is to go through the given data and select which items match the search "${search}". You should then return the id of every item that matches the criteria using json with the structure of "ids": [id1, id2, id3]. Include all relevant items. 
-      
+      systemInstruction: `Your job is to go through the given data and select which items match the search "${search}". You should then return the title of any item that matches the criteria using json with the structure of "titles": [title1, title2, title3]. Include all relevant items. Do not include things that don't match the search.
+
       This is the data:
       ${JSON.stringify(items)}`,
+      response_mime_type: "application/json",
     });
 
     chat = model.startChat();
-    const message = "";
+    const message = "Begin";
 
     const result = await chat.sendMessage(message);
     const response = await result.response;
@@ -42,11 +43,5 @@ const aiSearchController = async (search, items) => {
 };
 
 aiSearchController().catch(console.error);
-
-// const getItems = async (client) => {
-//   const cursor = await client.db("auction").collection("auctionitems").find();
-//   const list = await cursor.toArray();
-//   return list;
-// };
 
 module.exports = aiSearchController;

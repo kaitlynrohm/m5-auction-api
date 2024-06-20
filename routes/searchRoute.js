@@ -8,7 +8,7 @@ const searchController = require("../controllers/searchController");
 
 router.get("/api/search", (req, res) => {
   console.log("Search endpoint reached");
-  searchController(req.query).then((result) => {
+  searchController(req.query.search).then((result) => {
     res.send(result);
   });
 });
